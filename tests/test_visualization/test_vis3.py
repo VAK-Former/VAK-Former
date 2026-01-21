@@ -14,9 +14,9 @@ sys.path.insert(0, r"E:/USV/mmsegmentation")
 register_all_modules()
 
 config = r"E:/USV/mmsegmentation/configs/mask2former/mask2former_swin-l_lars_512x1024.py"
-checkpoint = r"E:/USV/oldbest/iter_10348.pth"
-img_path = r"E:/USV/mmsegmentation/Final Image results/12.0.jpg"
-out_path = "E:/USV/mmsegmentation/vis_img/12.4.png"
+checkpoint = r"E:/USV/mmsegmentation/work_dirs/mask2former_swin-l_lars_512x1024/best_mIoU_iter_6039.pth"
+img_path = r"E:/USV/mmsegmentation/Final Image results/24.0.jpg"
+out_path = "E:/USV/mmsegmentation/Final Image results/24.2.png"
 
 model = init_model(config, checkpoint, device="cuda:0")
 model.eval()
@@ -67,7 +67,12 @@ color_mask = palette[pred]
 
 OBSTACLE_ID = 0
 obstacle_mask = (pred == OBSTACLE_ID)
+# H, W = obstacle_mask.shape
 
+# cutoff_ratio = 0.75  # bottom 25% will be ignored
+# cutoff_row = int(H * cutoff_ratio)
+
+# obstacle_mask[cutoff_row:, :] = False
 vis = img.copy()
 
 vis = (0.6 * vis + 0.5 * color_mask).astype(np.uint8)
