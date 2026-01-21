@@ -1,0 +1,11 @@
+matplotlib
+numpy==1.26.4
+packaging
+prettytable
+scipy
+
+# Use CUDA 11.8 builds of PyTorch and TorchVision
+# Installed from the official PyTorch index
+torch==2.1.0+cu118
+torchvision==0.16.0+cu118
+--index-url https://download.pytorch.org/whl/cu118
