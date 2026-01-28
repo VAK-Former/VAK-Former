@@ -132,7 +132,7 @@ python tools/test.py configs/mask2former/mask2former_swin-l_lars.py \
 ```bibtex
 @misc{vakformer2025,
   title={VAK-Former: Swin-L based Mask2Former for Maritime Semantic Segmentation},
-  author={Anirudh Phophalia},
+  author={Khagendra Saini, Anirudh Phophalia, Vaani Mehta},
   year={2025},
   howpublished={\url{https://github.com/VAK-Former/VAK-Former}}
 }
