@@ -1,8 +1,20 @@
 cff-version: 1.2.0
-message: "If you use this, please cite it as below."
+message: "If you use VAK-Former in your research, please cite it as below."
+title: "VAK-Former: Swin-L based Mask2Former for Maritime Semantic Segmentation"
 authors:
-  - name: "MMSegmentation Contributors"
-title: "OpenMMLab Semantic Segmentation Toolbox and Benchmark"
-date-released: 2026-01-22
+  - family-names: "Saini"
+    given-names: "Khagendra"
+  - family-names: "Phophalia"
+    given-names: "Anirudh"
+  - family-names: "Mehta"
+    given-names: "Vaani"
+date-released: 2026
 url: "https://github.com/VAK-Former/VAK-Former"
+repository-code: "https://github.com/VAK-Former/VAK-Former"
 license: Apache-2.0
+keywords:
+  - Semantic Segmentation
+  - Maritime Perception
+  - Mask2Former
+  - Swin Transformer
+  - USV
