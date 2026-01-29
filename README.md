@@ -53,6 +53,16 @@ The proposed approach achieves improved segmentation performance compared to bas
 
 ---
 
+## Quantitative Results on LARS Dataset
+
+<div align="center">
+<img src="resources/lars.png" width="600"/>
+</div>
+
+The graph above compares the proposed **Mask2Former + Swin-L (VAK-former)** model with other models on the LARS Maritime Dataset. The proposed model achieves higher mIoU and F1 scores, demonstrating improved boundary precision and better detection of small maritime obstacles.
+
+---
+
 ## Installation
 
 This repository is built on **MMSegmentation v1.x**.
