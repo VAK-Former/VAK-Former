@@ -20,7 +20,6 @@ The project implements a **Mask2Former-style transformer architecture with a Swi
 To enhance transparency and reproducibility, we provide permanent links to the code and related artifacts:
 
 - **GitHub (source code):** https://github.com/VAK-Former/VAK-Former  
-- **Archived code (Zenodo):** https://doi.org/10.5281/zenodo.xxxxxxx  <!-- replace with actual DOI -->
 - **LaRS dataset:** Publicly available from the original authors; please follow their access and license terms.
 
 This code is **directly related** to the manuscript currently submitted to *The Visual Computer*.  
