@@ -2,8 +2,6 @@
 
 <div align="center">
 
-<img src="resources/mmseg-logo.png" width="500"/>
-
 **VAK-Former** is a research-oriented semantic segmentation framework built on top of **MMSegmentation**, designed for **autonomous inspection of Unmanned Surface Vessels (USVs) in maritime environments**.  
 The project implements a **Mask2Former-style transformer architecture with a Swin-Large backbone**, evaluated on the **LaRS (Lakes, Rivers and Seas) Maritime Dataset**.
 
@@ -157,7 +155,7 @@ python tools/train.py configs/mask2former/mask2former_swin-l_lars.py
 Important configuration aspects:
 
 - **Backbone:** Swin-Large with ImageNet pretraining.  
-- **Optimizer:** Stochastic Gradient Descent (SGD) with momentum.  
+- **Optimizer:** AdamW. 
 - **LR schedule:** Polynomial decay for stable convergence.  
 - **Loss:** Weighted combination of classification and mask losses (Mask2Former formulation).  
 - **Augmentations:** Random horizontal flip, scaling, color jittering.
@@ -177,8 +175,6 @@ python tools/test.py \
   work_dirs/mask2former_swin-l/latest.pth \
   --eval mIoU
 ```
-
-For full reproducibility of the paper’s results, we recommend:
 
 - Computing F1-score, mAcc, and mIoU from the predictions.  
 - Measuring FPS by averaging inference time across multiple consecutive frames under the same hardware conditions.
@@ -206,6 +202,8 @@ Key observations:
 - **Highest F1-score (97.71%)** among evaluated models, indicating very robust pixel-level classification in challenging maritime scenes.  
 - **12.33 FPS**, substantially faster than many transformer-based baselines while retaining a powerful Swin-L backbone.  
 - A favorable balance between **accuracy** and **runtime**, suitable for near real-time USV inspection.
+
+  <img src="resources/lars.png" width="500"/>
 
 ---
 
@@ -261,15 +259,15 @@ These qualitative results are consistent with the quantitative metrics, demonstr
 If you use this project in your research, please cite:
 
 ```bibtex
-@misc{vakformer2025,
+@misc{vakformer2026,
   title        = {VAK-Former: Swin-L based Mask2Former for Maritime Semantic Segmentation},
-  author       = {Khagendra Saini and Anirudh Phophalia and Vaani Mehta},
-  year         = {2025},
+  author       = {Dr. Payal Mittal, Khagendra Saini, Anirudh Phophalia, and Vaani Mehta},
+  year         = {2026},
   howpublished = {\url{https://github.com/VAK-Former/VAK-Former}}
 }
 ```
 
-(After acceptance in *The Visual Computer*, please update this entry with the journal’s official citation information.)
+(After acceptance in *The Visual Computer*, we will update this entry with the journal’s official citation information.)
 
 ---
 
