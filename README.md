@@ -4,62 +4,134 @@
 
 <img src="resources/mmseg-logo.png" width="500"/>
 
-**VAK-Former** is a research oriented semantic segmentation framework built on top of **MMSegmentation**, designed specifically for **Unmanned Surface Vehicle (USV) perception in maritime environments**.  
-The project focuses on improving segmentation accuracy on the **LARS Maritime Dataset** using a **Mask2Former architecture with a Swin-L Transformer backbone**.
+  
+**VAK-Former** is a research-oriented semantic segmentation framework built on top of **MMSegmentation**, designed for **autonomous inspection of Unmanned Surface Vessels (USVs) in maritime environments**.  
+The project implements a **Mask2Former-style transformer architecture with a Swin-Large backbone**, evaluated on the **LaRS (Lakes, Rivers and Seas) Maritime Dataset**.
+
 
 </div>
 
 ---
 
-## Motivation and Defence Relevance
+## Motivation and Application Context
 
-Autonomous and semi-autonomous **Unmanned Surface Vehicles (USVs)** are increasingly important for maritime surveillance, coastal monitoring, port security, and defence applications. Organizations such as **DRDO, BEL, and the Indian Navy** actively explore perception systems that enable reliable navigation in complex marine environments.
+Maritime environments such as lakes, rivers, and coastal seas are critical for transportation, trade, environmental monitoring, and defence, but they are visually complex due to waves, reflections, low contrast, small obstacles, and changing illumination.  
+Autonomous and semi-autonomous **USVs/USCVs (Unmanned Surface Cleaning Vessels)** depend on robust perception to safely navigate, avoid collisions, and perform tasks like inspection and floating-waste removal.
 
-Maritime scenes are uniquely challenging due to dynamic water surfaces, strong reflections, low contrast between objects and background, small and distant obstacles, and large illumination variations caused by weather and time of day. For defence-grade USVs, perception failures can directly translate into navigation errors, collision risks, or mission failure.
-
-Accurate **semantic segmentation** enables pixel-level understanding of the environment, allowing USVs to reliably identify navigable water regions, detect obstacles and vessels, and support downstream modules such as collision avoidance, path planning, and autonomous decision-making. This project is motivated by the need for **high-accuracy, robust segmentation models** rather than purely real-time systems.
-
----
-
-## Why Mask2Former with Swin-L Backbone
-
-Mask2Former formulates semantic segmentation as a **mask classification problem**, unifying semantic, instance, and panoptic segmentation under a single framework. This formulation is particularly effective in cluttered maritime scenes where object boundaries are ambiguous and water regions dominate the image.
-
-The **Swin-L (Large) Transformer backbone** was selected to maximize segmentation accuracy by capturing long-range spatial dependencies and global contextual information. Unlike traditional CNN backbones, Swin-L enables the model to better distinguish between water surfaces, distant vessels, and background structures. Although computationally expensive, Swin-L significantly improves boundary quality and small-object segmentation, which are critical for safety-critical defence applications.
+Traditional vision pipelines struggle with fine-grained obstacle boundaries and challenging imaging conditions, especially when relying on shallow features or classic morphology-based segmentation.  
+By contrast, modern deep-learning-based semantic segmentation enables **pixel-level understanding of water surfaces, vessels, and obstacles**, which is essential for real-time decision-making and safe USV operation.
 
 ---
 
-## Dataset: LARS Maritime Dataset
+## Method: Mask2Former-Style Transformer with Swin-L
 
-The **LARS Maritime Dataset** contains real-world maritime images captured from USV perspectives, with pixel-level annotations for water, obstacles, vessels, and background classes. The dataset reflects realistic operational conditions such as reflections, waves, occlusions, and varying lighting, making it well-suited for evaluating defence-oriented perception systems.
+VAK-Former adopts a **Mask2Former-style encoder–decoder framework** that reformulates semantic segmentation as a **mask classification (set prediction) problem** instead of dense per-pixel classification.  
+This design unifies semantic, instance, and panoptic segmentation and is particularly effective in cluttered maritime scenes dominated by water with multiple small and distant obstacles.
+
+The architecture consists of three main components:
+
+1. **Hierarchical Vision Transformer Backbone (Swin-Large)**  
+   - Extracts multi-scale feature maps from the input LaRS image using **shifted window attention**.  
+   - Captures long-range contextual dependencies while preserving spatial detail, improving separation of water regions, vessels, and background structures.
+
+2. **Multi-Scale Pixel Decoder with Deformable Attention**  
+   - Aggregates multi-resolution features in a feature-pyramid-like fashion.  
+   - Uses deformable attention to align and fuse features across scales, enhancing **boundary awareness** and **semantic consistency**.  
+   - Produces a high-resolution shared mask feature map that supports accurate segmentation of both large water regions and small obstacles.
+
+3. **Transformer Decoder with Mask Classification Head**  
+   - Operates on a fixed set of learnable queries, each representing a potential semantic region in the scene.  
+   - Uses stacked self-attention to model interactions between regions and cross-attention to link queries with pixel features from the pixel decoder.  
+   - Each query jointly predicts a **semantic class label** and an associated **segmentation mask**, eliminating heuristic post-processing (e.g., NMS) and framing segmentation as a set prediction task.
+
+This combination of **global context modeling (transformer), multi-scale fusion (pixel decoder), and query-based mask prediction (Mask2Former)** yields high-quality, spatially precise segmentation results in challenging maritime scenarios.
+
+---
+
+## Dataset: LaRS Maritime Dataset
+
+The **LaRS (Lakes, Rivers and Seas) Maritime Dataset** is a diverse benchmark for marine obstacle detection and semantic segmentation.  
+It contains thousands of per-pixel annotated images captured from real USVs across varied locations, obstacle types, and environmental conditions.
+
+Key characteristics:
+
+- **USV-mounted viewpoint**, matching realistic deployment scenarios.  
+- Per-pixel labels for water, obstacles/vessels, and background categories.  
+- Challenging conditions: strong reflections, waves, low contrast, fog/haze, small and distant objects.  
+
+VAK-Former uses LaRS for both training and evaluation, enabling a direct comparison with existing CNN- and transformer-based segmentation baselines.
 
 ---
 
 ## Experimental Setup
 
-- **Framework:** MMSegmentation (OpenMMLab)
-- **Model:** Mask2Former
-- **Backbone:** Swin-L Transformer
-- **Task:** Semantic Segmentation
-- **Evaluation Metrics:** Mean Intersection over Union (mIoU), F1 Score, Frames Per Second (FPS)
+- **Framework:** MMSegmentation (OpenMMLab, v1.x)  
+- **Model:** Mask2Former-style transformer segmentation  
+- **Backbone:** Swin-Large (hierarchical vision transformer)  
+- **Task:** Semantic segmentation for autonomous USV inspection  
+- **Dataset:** LaRS maritime dataset (train/val split as in the paper)  
+- **Metrics:** F1-score, Frames Per Second (FPS); mIoU and mean Accuracy (mAcc) are also monitored during training
 
-Training the Swin-L based Mask2Former model is computationally intensive and requires careful dependency management and long training times. However, this cost is justified by the significant performance gains in challenging maritime scenarios.
+### Training Protocol (High-Level)
+
+- Supervised training on LaRS with images resized to a fixed resolution and normalized.  
+- Standard augmentations: random horizontal flip, scaling, and color jitter to improve robustness to environmental variability.  
+- Swin-L backbone initialized from ImageNet pretraining; pixel decoder and transformer decoder trained from scratch.  
+- Optimization with stochastic gradient descent (SGD) with momentum and polynomial learning-rate decay.  
+- Combined classification and mask losses following the Mask2Former formulation.  
+- Training on a single GPU, with inference speed measured on the same hardware to obtain FPS.
+
+These choices aim to balance **high segmentation accuracy** with **practical runtime performance** for deployment on USV platforms.
 
 ---
 
-## Key Results
+## Key Results on LaRS
 
-The proposed approach achieves improved segmentation performance compared to baseline CNN-based methods, particularly in terms of mIoU and boundary accuracy. The model demonstrates superior handling of small and distant objects, smoother water–obstacle boundaries, and increased robustness to environmental variations. These results support the suitability of transformer-based segmentation models for real-world USV deployment.
+VAK-Former significantly improves **segmentation accuracy and runtime** compared to strong CNN and transformer baselines on the LaRS dataset.
+
+- Achieves an **F1-score of 97.71%**, indicating highly accurate pixel-level classification of water, obstacles, and background.  
+- Sustains an inference speed of **12.33 FPS**, providing near real-time performance suitable for onboard USV deployment.  
+- Demonstrates smoother and more consistent water–obstacle boundaries, fewer misclassifications around small objects, and improved robustness to reflections and low contrast.
+
+This balance between **accuracy (high F1)** and **efficiency (12.33 FPS)** makes the model suitable for real-time or near real-time autonomous inspection and obstacle-aware navigation.
 
 ---
 
-## Quantitative Results on LARS Dataset
+## Quantitative Comparison on LaRS
 
-<div align="center">
-<img src="resources/lars.png" width="600"/>
-</div>
+The table below summarizes the quantitative comparison between VAK-Former and representative state-of-the-art segmentation architectures on the LaRS dataset (F1-score and FPS as reported in the paper).
 
-The graph above compares the proposed **Mask2Former + Swin-L (VAK-former)** model with other models on the LARS Maritime Dataset. The proposed model achieves higher mIoU and F1 scores, demonstrating improved boundary precision and better detection of small maritime obstacles.
+| S.No. | Model              | Backbone   | FPS   | F1-score (%) |
+|-------|--------------------|-----------:|------:|-------------:|
+| 1     | Mask2Former        | Swin-B     | 4.80  | 71.10        |
+| 2     | Panoptic FPN       | ResNet-50  | 21.70 | 58.90        |
+| 3     | Mask2Former        | Swin-T     | 5.40  | 56.70        |
+| 4     | Panoptic FPN       | ResNet-101 | 16.70 | 58.10        |
+| 5     | Mask2Former        | ResNet-50  | 10.60 | 54.90        |
+| 6     | Mask2Former        | ResNet-101 | 5.70  | 53.20        |
+| 7     | Panoptic-DeepLab   | ResNet-50  | 6.00  | 64.60        |
+| 8     | MaX-DeepLab        | MaX-S      | 3.70  | 60.20        |
+| 9     | **VAK-Former (ours)** | **Swin-L** | **12.33** | **97.71** |
+
+Compared to these baselines, VAK-Former offers:
+
+- A substantial **F1-score margin** over both CNN-based and prior transformer-based approaches.  
+- A **higher FPS** than many transformer baselines, indicating an efficient design despite the large Swin-L backbone.
+
+---
+
+## Training Dynamics and Qualitative Results
+
+During training on LaRS, both **mean Accuracy (mAcc)** and **mIoU** steadily improve and converge smoothly, indicating stable optimization and effective learning of multi-scale semantic information.  
+The absence of large oscillations in the loss curve and the synchronized increase of mAcc and mIoU reflect robust training dynamics.
+
+Qualitative results on representative LaRS samples show:
+
+- Accurate segmentation of water versus non-water regions.  
+- Clear delineation of small and partially occluded obstacles.  
+- Robustness to strong reflections, hazy conditions, and cluttered backgrounds.  
+
+These observations align with the quantitative metrics and highlight the suitability of VAK-Former for **real-world autonomous USV inspection**.
 
 ---
 
@@ -80,17 +152,17 @@ mim install "mmcv==2.1.0"
 mim install mmdet
 ```
 
-Refer to the official MMSegmentation documentation for detailed installation instructions.
+For environment details, please also refer to the official **MMSegmentation** documentation.
 
 ---
 
 ## Dataset Preparation
 
-Prepare the LARS dataset in MMSegmentation format:
+Prepare the LaRS dataset in MMSegmentation format:
 
-```
+```text
 data/
- └── LARS/
+ └── LaRS/
      ├── images/
      │   ├── train/
      │   ├── val/
@@ -99,52 +171,75 @@ data/
          ├── val/
 ```
 
-Update dataset paths in the configuration files before training.
+Update dataset paths and class definitions in the configuration files (for example, `configs/mask2former/mask2former_swin-l_lars.py`) before training.
 
 ---
 
 ## Training
 
+Launch training with:
+
 ```bash
 python tools/train.py configs/mask2former/mask2former_swin-l_lars.py
 ```
 
+You can adjust learning rate, batch size, and training iterations in the config file to match the settings used in the paper or your hardware constraints.
+
 ---
 
 ## Evaluation
+
+Evaluate a trained checkpoint (e.g., the best F1-score model) on the validation set:
 
 ```bash
 python tools/test.py configs/mask2former/mask2former_swin-l_lars.py \
     work_dirs/mask2former_swin-l/latest.pth --eval mIoU
 ```
 
+For a full analysis, you may additionally compute F1-score, mAcc, and FPS as described in the paper.
+
 ---
 
 ## Project Contributions
 
-- Adaptation of Mask2Former for maritime semantic segmentation
-- Integration of Swin-L backbone for enhanced global context modeling
-- Custom training and evaluation pipeline for the LARS dataset
-- Extensive experimentation under limited computational resources
+- **Transformer-based segmentation for USVs:**  
+  Adaptation of a Mask2Former-style transformer architecture for **autonomous USV inspection** in challenging maritime conditions.
+
+- **Swin-L backbone for global context:**  
+  Integration of a Swin-Large hierarchical transformer to capture long-range dependencies while preserving fine spatial detail.
+
+- **Multi-scale pixel decoder with deformable attention:**  
+  Improved multi-resolution feature fusion, enhancing boundary precision and semantic consistency across scales.
+
+- **Query-based transformer decoder for mask classification:**  
+  Reformulation of segmentation as a set prediction problem using learnable queries for joint class and mask prediction.
+
+- **LaRS-specific training and evaluation pipeline:**  
+  Tailored data preprocessing, augmentation, and evaluation for the LaRS dataset, including detailed comparison with state-of-the-art baselines.
+
+- **Strong accuracy–speed trade-off:**  
+  Achieves **97.71% F1** at **12.33 FPS**, demonstrating that transformer-based architectures can be both accurate and practically deployable on USVs.
 
 ---
 
 ## Notes
 
-- Training is computationally expensive; multi-GPU systems are recommended
-- The focus of this project is segmentation accuracy rather than real-time inference
-- Intended for research and academic use
+- Training with a Swin-L backbone is computationally demanding; **high-memory single-GPU or multi-GPU systems** are recommended.  
+- The current implementation focuses on **high-quality segmentation and robust real-time performance**, rather than strict embedded real-time constraints.  
+- Intended primarily for **research and academic use**; additional optimization may be required for deployment on resource-constrained onboard hardware.
 
 ---
 
 ## Citation
 
+If you use this project in your research, please cite:
+
 ```bibtex
-@misc{vakformer2025,
-  title={VAK-Former: Swin-L based Mask2Former for Maritime Semantic Segmentation},
-  author={Khagendra Saini, Anirudh Phophalia, Vaani Mehta},
-  year={2025},
-  howpublished={\url{https://github.com/VAK-Former/VAK-Former}}
+@misc{vakformer2026,
+  title        = {VAK-Former: Swin-L based Mask2Former for Maritime Semantic Segmentation},
+  author       = {Khagendra Saini and Anirudh Phophalia and Vaani Mehta},
+  year         = {2026},
+  howpublished = {\url{https://github.com/VAK-Former/VAK-Former}}
 }
 ```
 
@@ -152,10 +247,17 @@ python tools/test.py configs/mask2former/mask2former_swin-l_lars.py \
 
 ## Acknowledgements
 
-This project builds upon **OpenMMLab MMSegmentation**, **Mask2Former**, and **Swin Transformer**. We acknowledge the open-source community for enabling advanced research in semantic segmentation.
+This project builds upon:
+
+- **OpenMMLab MMSegmentation**  
+- **Mask2Former**  
+- **Swin Transformer**  
+
+We acknowledge the authors of the LaRS dataset and the broader open-source community for enabling advanced research in maritime semantic segmentation and autonomous USV perception.
 
 ---
 
 ## License
 
-This project follows the **Apache 2.0 License**, consistent with MMSegmentation.
+This repository is released for non-commercial research and academic use.  
+Please check the repository’s LICENSE file for full terms and conditions.
