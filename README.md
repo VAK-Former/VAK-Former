@@ -26,7 +26,7 @@ By contrast, modern deep-learning-based semantic segmentation enables **pixel-le
 ## Method: Mask2Former-Style Transformer with Swin-L
 
 VAK-Former adopts a **Mask2Former-style encoder–decoder framework** that reformulates semantic segmentation as a **mask classification (set prediction) problem** instead of dense per-pixel classification.  
-This design unifies semantic, instance, and panoptic segmentation and is particularly effective in cluttered maritime scenes dominated by water with multiple small and distant obstacles.
+This design unifies semantic and instance segmentation and is particularly effective in cluttered maritime scenes dominated by water with multiple small and distant obstacles.
 
 The architecture consists of three main components:
 
