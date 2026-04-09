@@ -2,6 +2,8 @@ cff-version: 1.2.0
 message: "If you use VAK-Former in your research, please cite it as below."
 title: "VAK-Former: Swin-L based Mask2Former for Maritime Semantic Segmentation"
 authors:
+  - family-names: "Mittal"
+    given-names: "Payal"
   - family-names: "Saini"
     given-names: "Khagendra"
   - family-names: "Phophalia"
