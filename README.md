@@ -1,6 +1,11 @@
 # VAK-Former: Swin-L based Mask2Former for Maritime Semantic Segmentation
-
 <div align="center">
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.19482302.svg)](https://doi.org/10.5281/zenodo.19482302)
+
+</div>
+
+<div>
 
 **VAK-Former** is a research-oriented semantic segmentation framework built on top of **MMSegmentation**, designed for **autonomous inspection of Unmanned Surface Vessels (USVs) in maritime environments**.  
 The project implements a **Mask2Former-style transformer architecture with a Swin-Large backbone**, evaluated on the **LaRS (Lakes, Rivers and Seas) Maritime Dataset**.
