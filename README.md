@@ -18,6 +18,7 @@ The project implements a **Mask2Former-style transformer architecture with a Swi
 To enhance transparency and reproducibility, we provide permanent links to the code and related artifacts:
 
 - **GitHub (source code):** https://github.com/VAK-Former/VAK-Former  
+- **Zenodo (archived version with DOI):** https://doi.org/10.5281/zenodo.19482302
 - **LaRS dataset:** Publicly available from the original authors; please follow their access and license terms.
 
 This code is **directly related** to the manuscript currently submitted to *The Visual Computer*.  
@@ -203,7 +204,7 @@ Key observations:
 - **12.33 FPS**, substantially faster than many transformer-based baselines while retaining a powerful Swin-L backbone.  
 - A favorable balance between **accuracy** and **runtime**, suitable for near real-time USV inspection.
 
-  <img src="resources/lars.png" width="500"/>
+  <img src="resources/lars.png" />
 
 ---
 
@@ -254,16 +255,27 @@ These qualitative results are consistent with the quantitative metrics, demonstr
 
 ---
 
+## DOI and Archival
+
+This repository is permanently archived via Zenodo to ensure long-term accessibility and reproducibility:
+
+- DOI: https://doi.org/10.5281/zenodo.19482302
+
+Each release is versioned and citable. Researchers are encouraged to reference the specific version used in their experiments.
+
+
 ## Citation
 
 If you use this project in your research, please cite:
 
 ```bibtex
-@misc{vakformer2026,
+@software{vakformer2026,
+  author       = {Dr. Payal Mittal and Khagendra Saini and Anirudh Phophalia and Vaani Mehta},
   title        = {VAK-Former: Swin-L based Mask2Former for Maritime Semantic Segmentation},
-  author       = {Dr. Payal Mittal, Khagendra Saini, Anirudh Phophalia, and Vaani Mehta},
   year         = {2026},
-  howpublished = {\url{https://github.com/VAK-Former/VAK-Former}}
+  publisher    = {Zenodo},
+  doi          = {10.5281/zenodo.19482302},
+  url          = {https://doi.org/10.5281/zenodo.19482302}
 }
 ```
 
